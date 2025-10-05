@@ -142,7 +142,7 @@ npm start
 - Redirige automáticamente a `/signIn`
 
 ### 6. Credenciales de administrador
-El sistema crea automáticamente un usuario admin:
+El sistema crea automáticamente un usuario admin al iniciar el servidor:
 - **Email:** `admin@example.com`
 - **Password:** `Admin123!`
 
