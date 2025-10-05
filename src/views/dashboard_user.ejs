@@ -1,0 +1,169 @@
+<%- include('partials/header', { title: 'Dashboard' }) %>
+
+<div class="row">
+  <div class="col s12">
+    <h4>Dashboard de Usuario</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12 m6">
+    <div class="card dashboard-card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons left">person</i>
+          Bienvenido
+        </span>
+        <p id="welcome-message">Cargando información del usuario...</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 m6">
+    <div class="card dashboard-card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons left">info</i>
+          Información de Cuenta
+        </span>
+        <div id="account-info">
+          <p><strong>Email:</strong> <span id="user-email">-</span></p>
+          <p><strong>Edad:</strong> <span id="user-age">-</span></p>
+          <p><strong>Roles:</strong> <span id="user-roles">-</span></p>
+          <p><strong>Miembro desde:</strong> <span id="user-created">-</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large blue-text">account_circle</i>
+        <h5>Mi Perfil</h5>
+        <p>Actualiza tu información personal</p>
+        <a href="/profile" class="btn blue waves-effect waves-light">
+          <i class="material-icons left">edit</i>
+          Editar Perfil
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large green-text">security</i>
+        <h5>Seguridad</h5>
+        <p>Gestiona tu cuenta de forma segura</p>
+        <button class="btn green waves-effect waves-light" onclick="auth.logout()">
+          <i class="material-icons left">logout</i>
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large orange-text">help</i>
+        <h5>Soporte</h5>
+        <p>¿Necesitas ayuda?</p>
+        <button class="btn orange waves-effect waves-light" onclick="showSupportInfo()">
+          <i class="material-icons left">help</i>
+          Ayuda
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <div class="card dashboard-card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons left">history</i>
+          Actividad Reciente
+        </span>
+        <div id="recent-activity">
+          <p>No hay actividad reciente para mostrar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    if (!guard.checkAuth()) {
+        return;
+    }
+    await loadUserDashboard();
+});
+
+async function loadUserDashboard() {
+    try {
+        auth.showLoading('Cargando dashboard...');
+        
+        const user = await auth.getCurrentUser();
+        
+        if (user) {
+            document.getElementById('welcome-message').textContent = 
+                `¡Hola, ${user.name} ${user.lastName}!`;
+            
+            document.getElementById('user-email').textContent = user.email || '-';
+            document.getElementById('user-roles').textContent = 
+                user.roles ? user.roles.join(', ') : 'Usuario';
+            
+            document.getElementById('user-age').textContent = user.ageText || 'No especificada';
+            
+            document.getElementById('user-created').textContent = user.createdAtShort || 'N/A';
+            
+            updateRecentActivity();
+        } else {
+            auth.showMessage('Error al cargar los datos del dashboard', 'error');
+        }
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+        auth.showMessage('Error al cargar el dashboard', 'error');
+    } finally {
+        auth.hideLoading();
+    }
+}
+
+function updateRecentActivity() {
+    const activityContainer = document.getElementById('recent-activity');
+    const activities = [
+        'Inicio de sesión exitoso',
+        'Perfil actualizado',
+        'Dashboard accedido'
+    ];
+    
+    const activityHTML = activities.map(activity => `
+        <div class="row" style="margin: 10px 0;">
+            <div class="col s12">
+                <div class="chip">
+                    <i class="material-icons tiny">check_circle</i>
+                    ${activity}
+                </div>
+                <span class="grey-text" style="margin-left: 10px;">
+                    ${new Date().toLocaleString('es-ES')}
+                </span>
+            </div>
+        </div>
+    `).join('');
+    
+    activityContainer.innerHTML = activityHTML;
+}
+
+function showSupportInfo() {
+    alert('Soporte: soporte@example.com');
+}
+
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,99 @@
+<%- include('partials/header', { title: 'Página No Encontrada' }) %>
+
+<div class="row" style="margin-top: 80px;">
+  <div class="col s12 m8 offset-m2">
+    <div class="card">
+      <div class="card-content center-align">
+        <div style="font-size: 8rem; color: #ff9800; margin: 20px 0;">
+          <i class="material-icons">search_off</i>
+        </div>
+        
+        <h3 class="orange-text">404 - Página No Encontrada</h3>
+        
+        <p class="flow-text">
+          Lo sentimos, la página que buscas no existe.
+        </p>
+        
+        <div class="divider" style="margin: 30px 0;"></div>
+        
+        <p>
+          Es posible que la URL esté mal escrita o que la página haya sido movida.
+        </p>
+        
+        <div class="row" style="margin-top: 40px;">
+          <div class="col s12 m6">
+            <a href="/signIn" class="btn blue waves-effect waves-light btn-large">
+              <i class="material-icons left">home</i>
+              Ir al Inicio
+            </a>
+          </div>
+          <div class="col s12 m6">
+            <button onclick="history.back()" class="btn green waves-effect waves-light btn-large">
+              <i class="material-icons left">arrow_back</i>
+              Volver Atrás
+            </button>
+          </div>
+        </div>
+        
+        <div class="row" style="margin-top: 20px;">
+          <div class="col s12">
+            <a href="/signUp" class="btn orange waves-effect waves-light">
+              <i class="material-icons left">person_add</i>
+              Crear Cuenta
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const token = guard.getToken();
+    if (token && !guard.isTokenExpired(token)) {
+        const userInfo = guard.getUserInfo();
+        
+        if (userInfo) {
+            const additionalOptions = document.createElement('div');
+            additionalOptions.className = 'row';
+            additionalOptions.style.marginTop = '20px';
+            additionalOptions.innerHTML = `
+                <div class="col s12">
+                    <div class="divider"></div>
+                    <p style="margin-top: 20px;">Como usuario autenticado, también puedes:</p>
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <a href="/dashboard" class="btn purple waves-effect waves-light">
+                                <i class="material-icons left">dashboard</i>
+                                Dashboard
+                            </a>
+                        </div>
+                        <div class="col s12 m6">
+                            <a href="/profile" class="btn teal waves-effect waves-light">
+                                <i class="material-icons left">person</i>
+                                Mi Perfil
+                            </a>
+                        </div>
+                    </div>
+                    ${userInfo.roles && userInfo.roles.includes('admin') ? `
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col s12">
+                                <a href="/admin" class="btn red waves-effect waves-light">
+                                    <i class="material-icons left">admin_panel_settings</i>
+                                    Panel de Admin
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            const card = document.querySelector('.card .card-content');
+            card.appendChild(additionalOptions);
+        }
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

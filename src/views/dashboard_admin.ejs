@@ -1,0 +1,160 @@
+<%- include('partials/header', { title: 'Panel de Administración' }) %>
+
+<div class="row">
+  <div class="col s12">
+    <h4>
+      <i class="material-icons left">admin_panel_settings</i>
+      Panel de Administración
+    </h4>
+  </div>
+</div>
+
+<div id="admin-stats">
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <div id="users-table-container">
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large blue-text">refresh</i>
+        <h5>Actualizar Datos</h5>
+        <p>Recargar la lista de usuarios</p>
+        <button class="btn blue waves-effect waves-light" onclick="admin.initAdminDashboard()">
+          <i class="material-icons left">refresh</i>
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large green-text">person</i>
+        <h5>Mi Perfil</h5>
+        <p>Gestiona tu perfil de administrador</p>
+        <a href="/profile" class="btn green waves-effect waves-light">
+          <i class="material-icons left">edit</i>
+          Editar Perfil
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 m4">
+    <div class="card dashboard-card">
+      <div class="card-content center-align">
+        <i class="material-icons large orange-text">logout</i>
+        <h5>Cerrar Sesión</h5>
+        <p>Salir del panel de administración</p>
+        <button class="btn orange waves-effect waves-light" onclick="auth.logout()">
+          <i class="material-icons left">logout</i>
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <div class="card dashboard-card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons left">info</i>
+          Información del Sistema
+        </span>
+        <div class="row">
+          <div class="col s12 m6">
+            <p><strong>Versión:</strong> 1.0.0</p>
+            <p><strong>Estado:</strong> <span class="green-text">Operativo</span></p>
+            <p><strong>Última actualización:</strong> <span id="last-update">-</span></p>
+          </div>
+          <div class="col s12 m6">
+            <p><strong>Base de datos:</strong> <span class="green-text">Conectada</span></p>
+            <p><strong>Autenticación:</strong> <span class="green-text">Activa</span></p>
+            <p><strong>Logs del sistema:</strong> <a href="#" onclick="showSystemLogs()">Ver logs</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    if (!guard.checkAuth(['admin'])) {
+        return;
+    }
+    document.getElementById('last-update').textContent = new Date().toLocaleString('es-ES');
+    await admin.initAdminDashboard();
+});
+
+function showSystemLogs() {
+    const logs = [
+        { timestamp: new Date().toLocaleString('es-ES'), level: 'INFO', message: 'Sistema iniciado correctamente' },
+        { timestamp: new Date(Date.now() - 300000).toLocaleString('es-ES'), level: 'INFO', message: 'Usuario autenticado' },
+        { timestamp: new Date(Date.now() - 600000).toLocaleString('es-ES'), level: 'INFO', message: 'Base de datos conectada' },
+        { timestamp: new Date(Date.now() - 900000).toLocaleString('es-ES'), level: 'WARN', message: 'Intento de acceso no autorizado' },
+        { timestamp: new Date(Date.now() - 1200000).toLocaleString('es-ES'), level: 'INFO', message: 'Servidor iniciado en puerto 3000' }
+    ];
+    
+    const logsHTML = `
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Logs del Sistema</span>
+                <div class="logs-container" style="max-height: 400px; overflow-y: auto;">
+                    ${logs.map(log => `
+                        <div class="row" style="margin: 5px 0; padding: 10px; border-left: 4px solid ${log.level === 'WARN' ? '#ff9800' : '#4caf50'};">
+                            <div class="col s12">
+                                <div class="row" style="margin: 0;">
+                                    <div class="col s3">
+                                        <small class="grey-text">${log.timestamp}</small>
+                                    </div>
+                                    <div class="col s2">
+                                        <span class="chip ${log.level === 'WARN' ? 'orange' : 'green'} white-text">
+                                            ${log.level}
+                                        </span>
+                                    </div>
+                                    <div class="col s7">
+                                        <span>${log.message}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    const modalHTML = `
+        <div id="logs-modal" class="modal">
+            <div class="modal-content">
+                ${logsHTML}
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close btn blue">Cerrar</a>
+            </div>
+        </div>
+    `;
+    const existingModal = document.getElementById('logs-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.getElementById('logs-modal');
+    const instance = M.Modal.init(modal);
+    instance.open();
+}
+</script>
+
+<%- include('partials/footer') %>

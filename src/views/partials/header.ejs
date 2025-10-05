@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Express Mongo Auth' %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .nav-wrapper {
+            background-color: #2196F3 !important;
+        }
+        .brand-logo {
+            margin-left: 20px;
+        }
+        .main-content {
+            min-height: calc(100vh - 64px);
+            padding: 20px 0;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            border-radius: 4px;
+        }
+        .input-field input:focus + label {
+            color: #2196F3 !important;
+        }
+        .input-field input:focus {
+            border-bottom: 1px solid #2196F3 !important;
+            box-shadow: 0 1px 0 0 #2196F3 !important;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <main class="main-content">
+        <div class="container">

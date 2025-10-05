@@ -1,0 +1,172 @@
+<%- include('partials/header', { title: 'Mi Perfil' }) %>
+
+<div class="row">
+  <div class="col s12 m8 offset-m2">
+    <div class="card profile-card">
+      <div class="card-content">
+        <span class="card-title center-align">Mi Perfil</span>
+        
+        <div class="profile-avatar">
+          <i class="material-icons">person</i>
+        </div>
+
+        <form id="profile-form">
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">person</i>
+                <input id="name" name="name" type="text" required />
+                <label for="name">Nombre</label>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">person_outline</i>
+                <input id="lastName" name="lastName" type="text" required />
+                <label for="lastName">Apellido</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">email</i>
+                <input id="email" name="email" type="email" required readonly />
+                <label for="email">Email (no editable)</label>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">phone</i>
+                <input id="phoneNumber" name="phoneNumber" type="tel" />
+                <label for="phoneNumber">Teléfono</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">cake</i>
+                <input id="birthdate" name="birthdate" type="date" />
+                <label for="birthdate">Fecha de Nacimiento</label>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">security</i>
+                <input id="roles" name="roles" type="text" readonly />
+                <label for="roles">Roles</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">cake</i>
+                <input id="age" name="age" type="text" readonly />
+                <label for="age">Edad</label>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="input-field">
+                <i class="material-icons prefix">link</i>
+                <input id="url_profile" name="url_profile" type="url" />
+                <label for="url_profile">URL de Perfil</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <div class="input-field">
+                <i class="material-icons prefix">location_on</i>
+                <input id="address" name="address" type="text" />
+                <label for="address">Dirección</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="center-align">
+            <button class="btn waves-effect waves-light btn-large" type="submit">
+              <i class="material-icons left">save</i>
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    if (!guard.checkAuth()) {
+        return;
+    }
+    await loadUserProfile();
+    setupProfileForm();
+});
+
+async function loadUserProfile() {
+    try {
+        auth.showLoading('Cargando perfil...');
+        
+        const user = await auth.getCurrentUser();
+        
+        if (user) {
+            document.getElementById('name').value = user.name || '';
+            document.getElementById('lastName').value = user.lastName || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phoneNumber').value = user.phoneNumber || '';
+            document.getElementById('birthdate').value = user.birthdate ? user.birthdate.split('T')[0] : '';
+            document.getElementById('roles').value = user.roles ? user.roles.join(', ') : '';
+            document.getElementById('url_profile').value = user.url_profile || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('age').value = user.ageText || 'No especificada';
+            M.updateTextFields();
+        } else {
+            auth.showMessage('Error al cargar los datos del perfil', 'error');
+        }
+    } catch (error) {
+        console.error('Error cargando perfil:', error);
+        auth.showMessage('Error al cargar el perfil', 'error');
+    } finally {
+        auth.hideLoading();
+    }
+}
+
+function setupProfileForm() {
+    const form = document.getElementById('profile-form');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = {
+            name: formData.get('name'),
+            lastName: formData.get('lastName'),
+            phoneNumber: formData.get('phoneNumber'),
+            birthdate: formData.get('birthdate'),
+            url_profile: formData.get('url_profile'),
+            address: formData.get('address')
+        };
+        
+        if (!data.name || !data.lastName) {
+            auth.showMessage('Nombre y apellido son requeridos', 'error');
+            return;
+        }
+        
+        const success = await auth.updateCurrentUser(data);
+        
+        if (success) {
+            await loadUserProfile();
+        }
+    });
+}
+
+</script>
+
+<%- include('partials/footer') %>

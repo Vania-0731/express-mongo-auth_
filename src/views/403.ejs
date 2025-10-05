@@ -1,0 +1,64 @@
+<%- include('partials/header', { title: 'Acceso Denegado' }) %>
+
+<div class="row" style="margin-top: 80px;">
+  <div class="col s12 m8 offset-m2">
+    <div class="card">
+      <div class="card-content center-align">
+        <div style="font-size: 8rem; color: #f44336; margin: 20px 0;">
+          <i class="material-icons">block</i>
+        </div>
+        
+        <h3 class="red-text">403 - Acceso Denegado</h3>
+        
+        <p class="flow-text">
+          No tienes permisos para acceder a esta página.
+        </p>
+        
+        <div class="divider" style="margin: 30px 0;"></div>
+        
+        <p>
+          Esta área está restringida y requiere permisos especiales de administrador.
+        </p>
+        
+        <div class="row" style="margin-top: 40px;">
+          <div class="col s12 m6">
+            <a href="/dashboard" class="btn blue waves-effect waves-light btn-large">
+              <i class="material-icons left">home</i>
+              Ir al Dashboard
+            </a>
+          </div>
+          <div class="col s12 m6">
+            <a href="/profile" class="btn green waves-effect waves-light btn-large">
+              <i class="material-icons left">person</i>
+              Mi Perfil
+            </a>
+          </div>
+        </div>
+        
+        <div class="row" style="margin-top: 20px;">
+          <div class="col s12">
+            <a href="/signIn" class="btn orange waves-effect waves-light">
+              <i class="material-icons left">login</i>
+              Iniciar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const token = guard.getToken();
+    if (!token || guard.isTokenExpired(token)) {
+        const dashboardBtn = document.querySelector('a[href="/dashboard"]');
+        const profileBtn = document.querySelector('a[href="/profile"]');
+        
+        if (dashboardBtn) dashboardBtn.style.display = 'none';
+        if (profileBtn) profileBtn.style.display = 'none';
+    }
+});
+</script>
+
+<%- include('partials/footer') %>
