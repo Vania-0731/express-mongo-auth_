@@ -8,6 +8,12 @@ class UserService {
     }
 
     async getById(id) {
+        if (!id) {
+            const err = new Error('ID de usuario requerido');
+            err.status = 400;
+            throw err;
+        }
+        
         const user = await userRepository.findById(id);
         if (!user) {
             const err = new Error('Usuario no encontrado');
@@ -18,6 +24,12 @@ class UserService {
     }
 
     async updateById(id, updateData) {
+        if (!id) {
+            const err = new Error('ID de usuario requerido');
+            err.status = 400;
+            throw err;
+        }
+        
         const user = await userRepository.updateById(id, updateData);
         if (!user) {
             const err = new Error('Usuario no encontrado');

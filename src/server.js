@@ -45,7 +45,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI, { autoIndex: true })
+mongoose.connect(process.env.MONGO_URI, { autoIndex: true })
     .then(async () => {
         console.log('Mongo conectado');
         await seedRoles();

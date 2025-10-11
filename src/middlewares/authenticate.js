@@ -9,6 +9,10 @@ export default function authenticate(req, res, next) {
         const token = header.split(' ')[1];
         const payload = jwt.verify(token, process.env.JWT_SECRET);
 
+        if (!payload.sub) {
+            return res.status(401).json({ message: 'Token inválido' });
+        }
+
         req.userId = payload.sub;
         req.userRoles = payload.roles || [];
         next();

@@ -16,7 +16,8 @@ const admin = {
         try {
             const response = await auth.apiFetch(`/api/users/${userId}`);
             if (response && response.ok) {
-                return await response.json();
+                const userData = await response.json();
+                return userData;
             }
             return null;
         } catch (error) {
@@ -27,6 +28,7 @@ const admin = {
     },
 
     renderUsersTable(users) {
+        console.log('renderUsersTable - Usuarios recibidos:', users);
         const tableContainer = document.getElementById('users-table-container');
         if (!tableContainer) return;
 
@@ -59,7 +61,10 @@ const admin = {
                                 </tr>
                             </thead>
                             <tbody>
-                                ${users.map(user => `
+                                ${users.map(user => {
+                                    console.log('Usuario en tabla:', user);
+                                    console.log('ID del usuario:', user.id);
+                                    return `
                                     <tr>
                                         <td>${user.name} ${user.lastName}</td>
                                         <td>${user.email}</td>
@@ -72,12 +77,13 @@ const admin = {
                                         </td>
                                         <td>${user.createdAtShort || 'N/A'}</td>
                                         <td>
-                                            <button class="btn-small blue" onclick="admin.viewUserDetails('${user._id}')">
+                                            <button class="btn-small blue" onclick="admin.viewUserDetails('${user.id}')">
                                                 <i class="material-icons">visibility</i>
                                             </button>
                                         </td>
                                     </tr>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -90,6 +96,8 @@ const admin = {
 
     async viewUserDetails(userId) {
         try {
+            console.log('viewUserDetails - ID recibido:', userId);
+            console.log('viewUserDetails - Tipo de ID:', typeof userId);
             auth.showLoading('Cargando detalles del usuario...');
             const user = await this.getUserById(userId);
             if (user) {

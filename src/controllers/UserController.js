@@ -33,9 +33,12 @@ class UserController {
 
     async getById(req, res, next) {
         try {
+            console.log('UserController.getById - ID recibido:', req.params.id);
+            console.log('UserController.getById - Tipo de ID:', typeof req.params.id);
             const user = await userService.getById(req.params.id);
             res.status(200).json(user);
         } catch (err) {
+            console.error('UserController.getById - Error:', err);
             next(err);
         }
     }
